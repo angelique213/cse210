@@ -1,10 +1,10 @@
-public class TripItem
+// base class for anything in the trip (activity, transport, etc.)
+public abstract class TripItem
 {
-    protected string _name;
-    protected string _description;
-    protected double _cost;
+    private string _name;
+    private string _description;
+    private double _cost;
 
-    // Base constructor for all trip items
     public TripItem(string name, string description, double cost)
     {
         _name = name;
@@ -12,25 +12,16 @@ public class TripItem
         _cost = cost;
     }
 
-    public string GetName()
+    public string GetName() => _name;
+    public string GetDescription() => _description;
+    public double GetCost() => _cost;
+
+    // default details
+    public virtual string GetDetails()
     {
-        return _name;
+        return $"{_name} - {_description}";
     }
 
-    public string GetDescription()
-    {
-        return _description;
-    }
-
-    // This can be overridden in child classes
-    public virtual double CalculateCost()
-    {
-        return _cost;
-    }
-
-    // Returns a basic string for the item
-    public virtual string GetStringRepresentation()
-    {
-        return $"{_name} - {_description} - ${CalculateCost()}";
-    }
+    // each child class will calculate differently
+    public abstract double CalculateCost();
 }

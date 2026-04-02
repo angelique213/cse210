@@ -1,26 +1,25 @@
+// represents hotel or stay
 public class Accommodation : TripItem
 {
-    private string _accommodationName;
+    private string _hotel;
     private int _nights;
     private double _pricePerNight;
 
-    // Stores hotel or place to stay
-    public Accommodation(string name, string description, string accommodationName, int nights, double pricePerNight)
-        : base(name, description, 0)
+    public Accommodation(string name, string desc, string hotel, int nights, double price)
+        : base(name, desc, 0)
     {
-        _accommodationName = accommodationName;
+        _hotel = hotel;
         _nights = nights;
-        _pricePerNight = pricePerNight;
+        _pricePerNight = price;
     }
 
-    // Total cost depends on nights and price
     public override double CalculateCost()
     {
-        return _nights * _pricePerNight;
+        return _nights * _pricePerNight; // total = nights * price
     }
 
-    public override string GetStringRepresentation()
+    public override string ToString()
     {
-        return $"Accommodation: {_accommodationName}, Nights: {_nights}, Price/Night: ${_pricePerNight}, Total: ${CalculateCost()}";
+        return $"Stay: {_hotel} for {_nights} nights (${CalculateCost()})";
     }
 }

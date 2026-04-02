@@ -1,11 +1,10 @@
-using System;
 using System.Collections.Generic;
 
+// manages multiple trips
 public class TripManager
 {
     private List<Trip> _trips = new List<Trip>();
 
-    // Adds a trip to the list
     public void AddTrip(Trip trip)
     {
         _trips.Add(trip);
@@ -15,17 +14,17 @@ public class TripManager
     {
         if (_trips.Count == 0)
         {
-            Console.WriteLine("No trips available.");
+            System.Console.WriteLine("No trips found.");
             return;
         }
 
-        for (int i = 0; i < _trips.Count; i++)
+        foreach (Trip trip in _trips)
         {
-            Console.WriteLine($"{i + 1}. {_trips[i].GetTripSummary()}");
+            System.Console.WriteLine(trip.GetTripDetails());
         }
     }
 
-    public Trip FindTrip(string name)
+    public Trip FindTripByName(string name)
     {
         foreach (Trip trip in _trips)
         {
@@ -38,8 +37,35 @@ public class TripManager
         return null;
     }
 
+    // removes a trip by name
+    public bool DeleteTrip(string name)
+    {
+        for (int i = 0; i < _trips.Count; i++)
+        {
+            if (_trips[i].GetTripName().ToLower() == name.ToLower())
+            {
+                _trips.RemoveAt(i);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public string GetSummary()
     {
-        return $"Total trips: {_trips.Count}";
+        if (_trips.Count == 0)
+        {
+            return "No trips available.";
+        }
+
+        string result = "";
+
+        foreach (Trip trip in _trips)
+        {
+            result += trip.GetTripSummary() + "\n";
+        }
+
+        return result;
     }
 }

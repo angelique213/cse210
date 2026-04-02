@@ -1,92 +1,244 @@
 using System;
 
-class Program
+public class Program
 {
-    static void Main(string[] args)
+    public static void Main(string[] args)
     {
+        // create manager to store all trips
         TripManager manager = new TripManager();
-        string choice = "";
 
-        while (choice != "5")
+        bool running = true;
+
+        // main menu loop
+        while (running)
         {
-            Console.WriteLine("\nTravel Management System");
-            Console.WriteLine("1. Create New Trip");
-            Console.WriteLine("2. View Trips");
-            Console.WriteLine("3. Find Trip");
-            Console.WriteLine("4. Show Summary");
-            Console.WriteLine("5. Quit");
+            Console.WriteLine("\n===== Travel Planner =====");
+            Console.WriteLine("1. Create a new trip");
+            Console.WriteLine("2. Add item to a trip");
+            Console.WriteLine("3. View all trips");
+            Console.WriteLine("4. Find trip by name");
+            Console.WriteLine("5. View trip summaries");
+            Console.WriteLine("6. Delete a trip");
+            Console.WriteLine("7. Exit");
+
             Console.Write("Choose an option: ");
-            choice = Console.ReadLine();
+            string choice = Console.ReadLine();
 
-            if (choice == "1")
+            switch (choice)
             {
-                // Ask the user for trip info
-                Console.Write("Enter trip name: ");
-                string tripName = Console.ReadLine();
-
-                Console.Write("Enter traveler name: ");
-                string travelerName = Console.ReadLine();
-
-                Console.Write("Enter traveler email: ");
-                string email = Console.ReadLine();
-
-                Console.Write("Enter destination city: ");
-                string city = Console.ReadLine();
-
-                Console.Write("Enter destination country: ");
-                string country = Console.ReadLine();
-
-                Console.Write("Enter budget: ");
-                double maxBudget = double.Parse(Console.ReadLine());
-
-                // Create the main objects for the trip
-                Traveler traveler = new Traveler(travelerName, email);
-                Destination destination = new Destination(city, country);
-                Budget budget = new Budget(maxBudget);
-
-                Trip trip = new Trip(tripName, traveler, destination, budget);
-
-                // Add a few sample items so cost still works
-                trip.AddItem(new Activity("City Tour", "Guided tour", 40, city, "June 15"));
-                trip.AddItem(new Transportation("Flight", "Round trip flight", 500, "Plane", "Home", city));
-                trip.AddItem(new Accommodation("Hotel Stay", "3-night stay", "Main Hotel", 3, 120));
-
-                manager.AddTrip(trip);
-
-                Console.WriteLine("Trip created successfully.");
+                case "1":
+                    CreateTrip(manager); // create a new trip
+                    break;
+                case "2":
+                    AddItemToTrip(manager); // add activity/transport/etc
+                    break;
+                case "3":
+                    manager.DisplayTrips(); // show all trips
+                    break;
+                case "4":
+                    FindTrip(manager); // search for trip
+                    break;
+                case "5":
+                    Console.WriteLine(manager.GetSummary()); // summary
+                    break;
+                case "6":
+                    DeleteTrip(manager); // delete a trip
+                    break;
+                case "7":
+                    running = false; // exit program
+                    Console.WriteLine("Goodbye!");
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice.");
+                    break;
             }
-            else if (choice == "2")
+        }
+    }
+
+    // creates a new trip from user input
+    private static void CreateTrip(TripManager manager)
+    {
+        Console.Write("Trip name: ");
+        string tripName = Console.ReadLine();
+
+        Console.Write("Traveler name: ");
+        string name = Console.ReadLine();
+
+        Console.Write("Email: ");
+        string email = Console.ReadLine();
+
+        Console.Write("City: ");
+        string city = Console.ReadLine();
+
+        Console.Write("Country: ");
+        string country = Console.ReadLine();
+
+        double budgetAmount = ReadDouble("Budget: ");
+
+        // create objects and link them together
+        Traveler traveler = new Traveler(name, email);
+        Destination destination = new Destination(city, country);
+        Budget budget = new Budget(budgetAmount);
+
+        Trip trip = new Trip(tripName, traveler, destination, budget);
+
+        manager.AddTrip(trip);
+
+        Console.WriteLine("Trip created.");
+    }
+
+    // lets user add items to a specific trip
+    private static void AddItemToTrip(TripManager manager)
+    {
+        Console.Write("Enter trip name: ");
+        string tripName = Console.ReadLine();
+
+        Trip trip = manager.FindTripByName(tripName);
+
+        if (trip == null)
+        {
+            Console.WriteLine("Trip not found.");
+            return;
+        }
+
+        Console.WriteLine("1. Activity");
+        Console.WriteLine("2. Transportation");
+        Console.WriteLine("3. Accommodation");
+        Console.Write("Choose item type: ");
+        string choice = Console.ReadLine();
+
+        if (choice == "1")
+        {
+            // create activity
+            Console.Write("Name: ");
+            string name = Console.ReadLine();
+
+            Console.Write("Description: ");
+            string desc = Console.ReadLine();
+
+            double cost = ReadDouble("Cost: ");
+
+            Console.Write("Location: ");
+            string location = Console.ReadLine();
+
+            Console.Write("Date: ");
+            string date = Console.ReadLine();
+
+            trip.AddItem(new Activity(name, desc, cost, location, date));
+            Console.WriteLine("Activity added.");
+        }
+        else if (choice == "2")
+        {
+            // create transportation
+            Console.Write("Name: ");
+            string name = Console.ReadLine();
+
+            Console.Write("Description: ");
+            string desc = Console.ReadLine();
+
+            double cost = ReadDouble("Cost: ");
+
+            Console.Write("Type: ");
+            string type = Console.ReadLine();
+
+            Console.Write("From: ");
+            string from = Console.ReadLine();
+
+            Console.Write("To: ");
+            string to = Console.ReadLine();
+
+            trip.AddItem(new Transportation(name, desc, cost, type, from, to));
+            Console.WriteLine("Transportation added.");
+        }
+        else if (choice == "3")
+        {
+            // create accommodation
+            Console.Write("Name: ");
+            string name = Console.ReadLine();
+
+            Console.Write("Description: ");
+            string desc = Console.ReadLine();
+
+            Console.Write("Hotel: ");
+            string hotel = Console.ReadLine();
+
+            int nights = ReadInt("Nights: ");
+            double price = ReadDouble("Price per night: ");
+
+            trip.AddItem(new Accommodation(name, desc, hotel, nights, price));
+            Console.WriteLine("Accommodation added.");
+        }
+        else
+        {
+            Console.WriteLine("Invalid choice.");
+        }
+    }
+
+    // search for trip and show details
+    private static void FindTrip(TripManager manager)
+    {
+        Console.Write("Enter trip name: ");
+        string name = Console.ReadLine();
+
+        Trip trip = manager.FindTripByName(name);
+
+        if (trip == null)
+        {
+            Console.WriteLine("Not found.");
+        }
+        else
+        {
+            Console.WriteLine(trip.GetTripDetails());
+        }
+    }
+
+    // allows user to delete a trip
+    private static void DeleteTrip(TripManager manager)
+    {
+        Console.Write("Enter trip name to delete: ");
+        string name = Console.ReadLine();
+
+        bool removed = manager.DeleteTrip(name);
+
+        if (removed)
+        {
+            Console.WriteLine("Trip deleted.");
+        }
+        else
+        {
+            Console.WriteLine("Trip not found.");
+        }
+    }
+
+    // helper method for safe double input
+    private static double ReadDouble(string prompt)
+    {
+        double value;
+        while (true)
+        {
+            Console.Write(prompt);
+            if (double.TryParse(Console.ReadLine(), out value) && value >= 0)
             {
-                manager.DisplayTrips();
+                return value;
             }
-            else if (choice == "3")
-            {
-                Console.Write("Enter trip name: ");
-                string name = Console.ReadLine();
 
-                Trip foundTrip = manager.FindTrip(name);
+            Console.WriteLine("Invalid number.");
+        }
+    }
 
-                if (foundTrip != null)
-                {
-                    Console.WriteLine(foundTrip.GetTripDetails());
-                }
-                else
-                {
-                    Console.WriteLine("Trip not found.");
-                }
-            }
-            else if (choice == "4")
+    // helper method for safe int input
+    private static int ReadInt(string prompt)
+    {
+        int value;
+        while (true)
+        {
+            Console.Write(prompt);
+            if (int.TryParse(Console.ReadLine(), out value) && value >= 0)
             {
-                Console.WriteLine(manager.GetSummary());
+                return value;
             }
-            else if (choice == "5")
-            {
-                Console.WriteLine("Goodbye!");
-            }
-            else
-            {
-                Console.WriteLine("Invalid choice.");
-            }
+
+            Console.WriteLine("Invalid number.");
         }
     }
 }

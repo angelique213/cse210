@@ -1,32 +1,22 @@
+// tracks money
 public class Budget
 {
-    private double _maxBudget;
-    private double _currentSpent;
+    private double _max;
+    private double _spent;
 
-    // Keeps track of trip budget
-    public Budget(double maxBudget)
+    public Budget(double max)
     {
-        _maxBudget = maxBudget;
-        _currentSpent = 0;
+        _max = max;
+        _spent = 0;
     }
 
     public void AddExpense(double amount)
     {
-        _currentSpent += amount;
+        _spent += amount;
     }
 
     public double GetRemaining()
     {
-        return _maxBudget - _currentSpent;
-    }
-
-    public bool IsOverBudget()
-    {
-        return _currentSpent > _maxBudget;
-    }
-
-    public string GetBudgetDetails()
-    {
-        return $"Budget: ${_maxBudget}, Spent: ${_currentSpent}, Remaining: ${GetRemaining()}";
+        return _max - _spent;
     }
 }

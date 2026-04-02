@@ -1,12 +1,12 @@
+// represents transport like flight or train
 public class Transportation : TripItem
 {
     private string _type;
     private string _from;
     private string _to;
 
-    // Stores travel between places
-    public Transportation(string name, string description, double cost, string type, string from, string to)
-        : base(name, description, cost)
+    public Transportation(string name, string desc, double cost, string type, string from, string to)
+        : base(name, desc, cost)
     {
         _type = type;
         _from = from;
@@ -15,11 +15,11 @@ public class Transportation : TripItem
 
     public override double CalculateCost()
     {
-        return _cost;
+        return GetCost();
     }
 
-    public override string GetStringRepresentation()
+    public override string ToString()
     {
-        return $"Transportation: {_type} from {_from} to {_to}, Cost: ${CalculateCost()}";
+        return $"Transport: {_type} from {_from} to {_to} (${CalculateCost()})";
     }
 }
